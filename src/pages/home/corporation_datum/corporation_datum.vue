@@ -1,11 +1,10 @@
 <template>
   <div class="personage">
-    <top-header></top-header>
     <el-main>
       <el-row>
         <el-col :span="24" class="greet">
           <div class="grid-content bg-purple-dark">
-            <span style="color:#1890FF;">Admin</span>
+            <span style="color:#1890FF;">{{this.$store.state.phone}}</span>
             ,欢迎进入映盛中国供应商管理系统，如有合作，我们会以027-87626798与您联系！！
           </div>
           <el-button type="primary" icon="el-icon-refresh" @click="update">更新</el-button>
@@ -17,27 +16,27 @@
         <!-- 公司信息循环输出start -->
         <el-col :span="12" class="content_text">
           <div>公司名称：</div>
-          <span>上海映盛网络技术股份有限公司</span>
+          <span>{{supplierRegisterInfo.companyName}}</span>
         </el-col>
         <el-col :span="12" class="content_text">
           <div>统一社会信用代码：</div>
-          <span>1234123421</span>
+          <span>{{supplierRegisterInfo.creditCode}}</span>
         </el-col>
         <el-col :span="12" class="content_text">
           <div>办公地址：</div>
-          <span>浙江省杭州市西湖区万塘路18号</span>
+          <span>{{supplierRegisterInfo.address}}</span>
         </el-col>
         <el-col :span="12" class="content_text">
           <div>所属区域：</div>
-          <span>上海市-徐汇区</span>
+          <span>{{supplierRegisterInfo.area}}</span>
         </el-col>
         <el-col :span="12" class="content_text">
           <div>公司成立时间：</div>
-          <span>2013-02-21</span>
+          <span>{{supplierRegisterInfo.companyTime}}</span>
         </el-col>
         <el-col :span="12" class="content_text">
           <div>法定代表人姓名：</div>
-          <span>马发腾</span>
+          <span>{{supplierRegisterInfo.companyLegal}}</span>
         </el-col>
         <!-- 公司信息循环输出end -->
         <el-col :span="12" class="content_text">
@@ -55,27 +54,33 @@
         <el-col :span="24" class="content_title">服务信息</el-col>
         <el-col :span="24" class="content_text">
           <div style="width: 5em;">服务类型：</div>
-          <span style="max-width: 92%;">例如提供提供互联网营销推广服务，企业官网认证、搜索引擎品牌建档、百度百科、新闻撰写发布、百度贴吧吧主代运营、SEO优化、抖音代运营、信息流广告开户及一手达人资源、危机公关等互联网营销产品与服务</span>
+          <span style="max-width: 92%;">{{supplierRegisterInfo.serviceType}}</span>
         </el-col>
         <el-col :span="24" class="content_text">
           <div style="width: 5em;">服务客户：</div>
-          <span style="max-width: 92%;">东风本田,东风汽车</span>
+          <span style="max-width: 92%;">{{supplierRegisterInfo.serviceCustomer}}</span>
         </el-col>
       </el-row>
       <!-- 服务信息end -->
       <!-- 联系人信息start -->
       <el-row>
         <el-col :span="24" class="content_title">联系人信息</el-col>
-        <el-col :span="24" style="padding: 0;">
-          <el-col :span="6" class="content_text" v-for="item of contacts_datum" :key="item.id">
-            <div>{{item.title}}</div>
-            <span>{{item.content}}</span>
+        <el-col :span="24" style="padding: 0;"  v-for="item of supplierContactInfoList" :key=item.index>
+          <el-col :span="6" class="content_text">
+            <div>姓名:</div>
+            <span>{{item.name}}</span>
           </el-col>
-        </el-col>
-        <el-col :span="24" style="padding: 0;">
-          <el-col :span="6" class="content_text" v-for="item of contacts_datum" :key="item.id">
-            <div>{{item.title}}</div>
-            <span>{{item.content}}</span>
+          <el-col :span="6" class="content_text">
+            <div>电话：</div>
+            <span>{{item.tel}}</span>
+          </el-col>
+          <el-col :span="6" class="content_text">
+            <div>微信&QQ：</div>
+            <span>{{item.wechatOrQQ}}</span>
+          </el-col>
+          <el-col :span="6" class="content_text">
+            <div>邮箱：</div>
+            <span>{{item.mail}}</span>
           </el-col>
         </el-col>
       </el-row>
@@ -85,23 +90,23 @@
         <el-col :span="24" class="content_title">开票信息</el-col>
         <el-col :span="12" class="content_text">
           <div>开户行名称：</div>
-          <span>上海市工商银行卢湾支行</span>
+          <span>{{supplierRegisterInfo.invoiceBank}}</span>
         </el-col>
         <el-col :span="12" class="content_text">
           <div>银行卡账号：</div>
-          <span>1234-1234-1234-1234</span>
+          <span>{{supplierRegisterInfo.invoiceAccount}}</span>
         </el-col>
         <el-col :span="7" class="content_text">
           <div>收件人姓名：</div>
-          <span>大叔的哈苏</span>
+          <span>{{supplierRegisterInfo.invoiceReceiveUser}}</span>
         </el-col>
         <el-col :span="7" class="content_text">
           <div>收件人电话：</div>
-          <span>1234123421</span>
+          <span>{{supplierRegisterInfo.invoiceReceiveContact}}</span>
         </el-col>
         <el-col :span="10" class="content_text">
           <div>收件人地址：</div>
-          <span>浙江省杭州市西湖区万塘路18号</span>
+          <span>{{supplierRegisterInfo.invoiceReceiveAddr}}</span>
         </el-col>
       </el-row>
       <!-- 开票信息信息end -->
@@ -117,14 +122,14 @@
         <el-col
           :span="22"
           class="content_text upload_content"
-          v-for="item of upload_content"
-          :key="item.id"
+          v-for="item of supplierRegisterFileList"
+          :key=item.index
         >
-          <el-col :span="9" class="text_indent_1">{{item.name}}</el-col>
-          <el-col :span="13">{{item.time}}</el-col>
+          <el-col :span="9" class="text_indent_1">{{item.fileName}}</el-col>
+          <el-col :span="13">{{item.createTime}}</el-col>
           <el-col :span="2">
-            <a href="javascript:;"><el-link type="primary">预览</el-link></a>
-            <a href="javascript:;"><el-link type="primary">下载</el-link></a>
+            <el-link type="primary"  @click="showImage(item.filePath)">预览</el-link>
+            <el-link type="primary" @click="downLoadDoc(item.filePath)">下载</el-link>
           </el-col>
         </el-col>
         <!-- 循环输出文档资料end -->
@@ -132,66 +137,38 @@
       </el-row>
       <!-- 资质信息end -->
     </el-main>
+    <el-dialog
+      title="预览"
+      :visible.sync="dialogVisible"
+      width="30%">
+      <div class="previewImage">
+        <img :src="previewImage" alt="">
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 <script>
-import topHeader from '../header.vue'
 export default {
   name: 'corporation_datum',
   components: {
-    topHeader
+
   },
   data() {
     return {
-      // 基本信息
-      // 服务信息
+      scissionPhone: '',
+      deli: '',
+      // 基本信息 服务信息 
+      supplierRegisterInfo: '',
       // 联系人信息
-      contacts_datum: [
-        {
-          id: 1,
-          title: '姓名：',
-          content: '大叔的哈苏'
-        },
-        {
-          id: 2,
-          title: '电话：',
-          content: '1234123421'
-        },
-        {
-          id: 3,
-          title: '微信&QQ：',
-          content: '1234123421'
-        },
-        {
-          id: 4,
-          title: '邮箱：',
-          content: '12345fdf@163.com'
-        }
-      ],
+      supplierContactInfoList: [],
       // 开票信息
       // 文档资料
-      upload_content: [
-        {
-          id: 1,
-          name: '身份证.jpg',
-          time: '2019-10-01 12:00'
-        },
-        {
-          id: 2,
-          name: '技术认证证书.jpg',
-          time: '2019-10-01 12:00'
-        },
-        {
-          id: 3,
-          name: '技术认证证书.jpg',
-          time: '2019-10-01 12:00'
-        },
-        {
-          id: 4,
-          name: '技术认证证书.jpg',
-          time: '2019-10-01 12:00'
-        }
-      ]
+      supplierRegisterFileList: '',
+      dialogVisible:false, //控制显示预览弹框
+      previewImage:'', //预览的图片
     }
   },
   // 方法
@@ -207,7 +184,6 @@ export default {
     // 获取供应商信息 start
     getSupplierInfo() {
       let phone = this.scissionPhone
-      console.log(phone)
       this.$axios
         .post(
           '/api/insunSupplierRegisterInfo/getSupplierInfo' + '?phone=' + phone
@@ -219,8 +195,22 @@ export default {
       if (data.errorCode == "0") {
         let deli=JSON.parse(data.ext)
         console.log(deli)
+        this.deli = deli
+        this.supplierRegisterInfo = deli.supplierRegisterInfo
+        this.supplierContactInfoList = deli.supplierRegisterInfo.supplierContactInfoList
+        this.supplierRegisterFileList = deli.supplierRegisterInfo.supplierRegisterFileList
       }
-      // console.log(res.data.ext)
+    },
+    // 预览  下载
+    showImage(path){
+      this.dialogVisible = true;
+      this.previewImage = '../../../static/img/logo.png';
+    },
+    downLoadDoc(path){
+      let a = document.createElement('a');
+        a.download = '';
+        a.setAttribute('href',path);
+        a.click();
     }
   },
   // 钩子函数
@@ -233,7 +223,15 @@ export default {
 <style scoped>
 .personage {
   background: rgba(246, 247, 249, 1);
-  /* background: #333333; */
+}
+.previewImage{
+  width: 100%;
+  text-align: center;
+}
+.previewImage img{
+  display: inline-block;
+  max-width: 100%;
+  max-height: 100%;
 }
 .text_indent_1 {
   text-indent: 1em;
@@ -242,7 +240,6 @@ export default {
   max-width: 1080px;
   margin: 0 auto;
   padding: 0;
-  /* background: white; */
 }
 .el-row {
   margin-bottom: 28px;
@@ -271,7 +268,6 @@ export default {
   border-bottom: 1px solid rgba(233, 233, 233, 1);
 }
 .personage .content_text {
-  /* height: 32px; */
   line-height: 32px;
   font-size: 14px;
   margin: 3px 0;

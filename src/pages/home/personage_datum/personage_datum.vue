@@ -1,11 +1,10 @@
 <template>
   <div class="personage">
-    <top-header></top-header>
     <el-main>
       <el-row>
         <el-col :span="24" class="greet">
           <div class="grid-content bg-purple-dark">
-            <span style="color:#1890FF;">Admin</span>
+            <span style="color:#1890FF;">{{this.$store.state.phone}}</span>
             ,欢迎进入映盛中国供应商管理系统，如有合作，我们会以027-87626798与您联系！！
           </div>
           <el-button type="primary" icon="el-icon-refresh" @click="update">更新</el-button>
@@ -16,23 +15,25 @@
         <el-col :span="24" class="content_title">基本信息</el-col>
         <el-col :span="8" class="content_text" >
           <div>姓名：</div>
-          <span>大叔的哈苏</span>
+          <span>
+            {{name}}
+          </span>
         </el-col>
         <el-col :span="8" class="content_text" >
           <div>电话：</div>
-          <span>1234123421</span>
+          <span>{{tel}}</span>
         </el-col>
         <el-col :span="8" class="content_text" >
           <div>微信&QQ：</div>
-          <span>1234123421</span>
+          <span>{{wechatOrQQ}}</span>
         </el-col>
         <el-col :span="8" class="content_text" >
           <div>地址：</div>
-          <span>浙江省杭州市西湖区万塘路18号</span>
+          <span>{{details.supplierRegisterInfo.address}}</span>
         </el-col>
         <el-col :span="8" class="content_text" >
           <div>邮箱：</div>
-          <span>Autocar@baid.com</span>
+          <span>{{mail}}</span>
         </el-col>
       </el-row>
       <!-- 基本信息end -->
@@ -41,11 +42,11 @@
         <el-col :span="24" class="content_title">服务信息</el-col>
         <el-col :span="24" class="content_text">
           <div style="width: 5em;">服务类型：</div>
-          <span style="max-width: 92%;">例如提供提供互联网营销推广服务，企业官网认证、搜索引擎品牌建档、百度百科、新闻撰写发布、百度贴吧吧主代运营、SEO优化、抖音代运营、信息流广告开户及一手达人资源、危机公关等互联网营销产品与服务</span>
+          <span style="max-width: 92%;">{{details.supplierRegisterInfo.serviceType}}</span>
         </el-col>
         <el-col :span="24" class="content_text">
           <div style="width: 5em;">服务客户：</div>
-          <span style="max-width: 92%;">东风本田,东风汽车</span>
+          <span style="max-width: 92%;">{{details.supplierRegisterInfo.serviceCustomer}}</span>
         </el-col>
       </el-row>
       <!-- 服务信息end -->
@@ -55,15 +56,15 @@
         <!-- 循环输出银行个人信息start -->
         <el-col :span="12" class="content_text">
           <div style="width: 6em;text-align: right;">开户行名称：</div>
-          <span>上海市工商银行卢湾支行</span>
+          <span>{{details.supplierRegisterInfo.bankName}}</span>
         </el-col>
         <el-col :span="12" class="content_text">
           <div style="width: 6em;text-align: right;">银行卡账号：</div>
-          <span>1234-1234-1234-1234</span>
+          <span>{{details.supplierRegisterInfo.bankAccount}}</span>
         </el-col>
         <el-col :span="24" class="content_text">
           <div style="width: 6em;text-align: right;">身份证号：</div>
-          <span>123456789123456789</span>
+          <span>{{details.supplierRegisterInfo.idCard}}</span>
         </el-col>
         <el-col :span="24" class="content_text">
           <div style="width: 6em;text-align: right;">资质文件：</div>
@@ -82,11 +83,11 @@
           v-for="item of upload_content"
           :key=item.index
         >
-          <el-col :span="9" class="text_indent_1">{{item.name}}</el-col>
-          <el-col :span="13">{{item.time}}</el-col>
+          <el-col :span="9" class="text_indent_1">{{item.fileName}}</el-col>
+          <el-col :span="13">{{item.createTime}}</el-col>
           <el-col :span="2">
-            <a href="javascript:;"><el-link type="primary">预览</el-link></a>
-            <a href="javascript:;"><el-link type="primary">下载</el-link></a>
+            <el-link type="primary" @click="showImage(item.filePath)">预览</el-link>
+            <el-link type="primary" @click="downLoadDoc(item.filePath)">下载</el-link>
           </el-col>
         </el-col>
         <!-- 循环输出文档资料end -->
@@ -94,44 +95,44 @@
       </el-row>
       <!-- 资质信息end -->
     </el-main>
+    <el-dialog
+      title="预览"
+      :visible.sync="dialogVisible"
+      width="30%">
+      <div class="previewImage">
+        <img :src="previewImage" alt="">
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 <script>
-import topHeader from '../header.vue'
 export default {
   name: 'personage_datum',
   components: {
-    topHeader
+
   },
   data() {
     return {
+      details: {
+          supplierRegisterInfo:{
+            address:'',
+          }
+      },
+      dialogVisible:false, //控制显示预览弹框
+      name:'',
+      tel:"",
+      mail:'',
+      wechatOrQQ:'', 
+
       // 基本信息
       // 服务信息
       // 银行个人信息
       // 文档资料
-      upload_content: [
-        {
-          id: 1,
-          name: '身份证.jpg',
-          time: '2019-10-01 12:00'
-        },
-        {
-          id: 2,
-          name: '技术认证证书.jpg',
-          time: '2019-10-01 12:00'
-        },
-        {
-          id: 3,
-          name: '技术认证证书.jpg',
-          time: '2019-10-01 12:00'
-        },
-        {
-          id: 4,
-          name: '技术认证证书.jpg',
-          time: '2019-10-01 12:00'
-        }
-      ],
-
+      upload_content: [],
+      previewImage:'', //预览的图片
     }
   },
   // 方法
@@ -147,7 +148,6 @@ export default {
     // 获取供应商信息 start
     getSupplierInfo() {
       let phone = this.scissionPhone
-      console.log(phone)
       this.$axios
         .post(
           '/api/insunSupplierRegisterInfo/getSupplierInfo' + '?phone=' + phone
@@ -158,11 +158,27 @@ export default {
       let data = res.data
       if (data.errorCode == "0") {
         let deli=JSON.parse(data.ext)
-        console.log(deli)
-      }
-      // console.log(res.data.ext)
-    }
+        this.details = deli
 
+        this.name = deli.supplierRegisterInfo.supplierContactInfoList[0].name;
+        this.tel = deli.supplierRegisterInfo.supplierContactInfoList[0].tel;
+        this.mail = deli.supplierRegisterInfo.supplierContactInfoList[0].mail;
+        this.wechatOrQQ = deli.supplierRegisterInfo.supplierContactInfoList[0].wechatOrQQ;
+        this.upload_content = deli.supplierRegisterInfo.supplierRegisterFileList;
+        console.log(this.details)
+      }
+    },
+    //下载附件
+    downLoadDoc(path){
+      let a = document.createElement('a');
+        a.download = '';
+        a.setAttribute('href',path);
+        a.click();
+    },
+    showImage(path){
+      this.dialogVisible = true;
+      this.previewImage = '../../../static/img/logo.png';
+    },
     // 获取供应商信息 end
   },
   // 钩子函数
@@ -175,7 +191,15 @@ export default {
 <style scoped>
 .personage {
   background: rgba(246, 247, 249, 1);
-  /* background: #333333; */
+}
+.previewImage{
+  width: 100%;
+  text-align: center;
+}
+.previewImage img{
+  display: inline-block;
+  max-width: 100%;
+  max-height: 100%;
 }
 .text_indent_1 {
   text-indent: 1em;
@@ -184,7 +208,6 @@ export default {
   max-width: 1080px;
   margin: 0 auto;
   padding: 0;
-  /* background: white; */
 }
 .el-row {
   margin-bottom: 28px;
@@ -213,7 +236,6 @@ export default {
   border-bottom: 1px solid rgba(233, 233, 233, 1);
 }
 .personage .content_text {
-  /* height: 32px; */
   line-height: 32px;
   font-size: 14px;
   margin: 3px 0;

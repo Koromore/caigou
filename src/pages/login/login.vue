@@ -1,7 +1,5 @@
 <template>
   <div class="login">
-    <top-header></top-header>
-    <!-- <h1 class="login-title">V客联盟自媒体录入系统</h1> -->
     <div class="login-div" :style="winHeight">
       <div class="login-title">
         <p>映盛中国</p>
@@ -11,9 +9,6 @@
         <div class="login-input">
           <div class="title">登录/注册</div>
           <el-form ref="form" :model="form">
-            <!-- <el-form-item>
-              <el-input autocomplete="off" clearable v-model="form.username" placeholder="姓名"></el-input>
-            </el-form-item>-->
             <!-- 手机号输入框 start -->
             <el-form-item class="phone">
               <el-input
@@ -90,12 +85,6 @@
               <el-radio v-model="form.type" label="1">公司</el-radio>
             </div>
             <!-- 选择账号类型 end -->
-            <!--  -->
-            <!-- <el-form-item class="remember">
-              <el-checkbox v-model="form.remember">自动登录</el-checkbox>
-            </el-form-item>
-            <el-link type="primary" class="forget">忘记密码</el-link> -->
-            <!--  -->
             
             <!-- 验证按钮 start -->
             <el-form-item class="verify_but" v-if=verify_but_show>
@@ -121,15 +110,15 @@
   </div>
 </template>
 <script>
-import topHeader from '../header.vue'
+// import topHeader from '../header.vue'
 export default {
   name: 'login',
   components: {
-    topHeader
+    // topHeader
   },
   data() {
     return {
-      imgcode: '../../../static/img/logo.png',
+      imgcode: '../../../static/images/logo.png',
       form: {
         phone: '', // 手机号
         smsCode: '', // 验证码
@@ -157,7 +146,7 @@ export default {
   },
   methods: {
     orderHight() {
-      var winHeight = window.innerHeight - 86
+      var winHeight = window.innerHeight
       this.winHeight = 'height:' + winHeight + 'px;'
     },
     test(){
@@ -189,7 +178,6 @@ export default {
     verifySuss(res){
       let data = res.data
       this.verify_code = data.ext
-      // console.log(res.data)
     },
     // 验证手机号是否已注册 end
 
@@ -284,7 +272,6 @@ export default {
         // 获取图片验证码
         this.imgCodeButShow = false
         this.loading = true
-        // this.imgCodeShow = false
         let params = {}
         params.mobile = this.form.phone
         if (this.register_but_show == true) {
@@ -307,12 +294,6 @@ export default {
       if (data.errorCode == "0") {
         this.loading = false
         this.imgCodeShow = true
-        // 验证码生成成功提示
-        // this.$message({
-        //   showClose: true,
-        //   message: "图片验证码生成成功,30分钟内有效"
-        // });
-        
         const data = res.data
         this.imgcode = 'data:image/jpg;base64,' + data.img
         console.log(res.data)
@@ -322,8 +303,6 @@ export default {
 
     // 注册start
     register(formName) {
-      // if (!this.registerState) return
-      // this.registerState = false
       if (this.form.phone === '' || this.form.smsCode === '') {
         this.$alert('请将信息填写完整！', '提示', {
           confirmButtonText: '确定',
@@ -337,50 +316,30 @@ export default {
         this.registerFn()
       }
     },
-    // register() {
-    //   this.$router.push({ path: '/register' })
-    // },
     registerFn() {
       let params = {}
       params.phone = this.form.phone
       params.shortMsgCode = this.form.smsCode
       params.type = this.form.type
       params.imgCode = this.form.imgCode
-      // console.log(params)
-      // params.append('remember', this.form.remember ? 'yes' : 'no')
       this.$axios
         .post('/api//insunSupplierRegisterInfo/signUp'
         + '?phone=' + params.phone // 手机号
         + '&shortMsgCode=' + params.shortMsgCode // 短信验证码
         + '&imgCode=' + params.imgCode // 图形验证码
         + '&type=' + params.type) // 账号类型
-        // .then(this.loginSuccess)
+        .then(this.loginSuccess)
     },
-    // register(res) {
-      //艾辉
-      //6000020
-      // console.log(res.data)
-      // this.loginState = true
-      // if (res.data.result) {
-      //   let userInfo = {
-      //     //username: this.form.username,
-      //     number: this.form.phoneNumber,
-      //     password: this.form.password,
-      //     remember: this.form.remember ? 'yes' : 'no'
-      //   }
-      //   //每次登陆后就设置 isLogin
-      //   window.sessionStorage.setItem('isLogin', 'success')
-
-      //   this.$store.commit('login', userInfo)
-      //   this.$router.push({ path: '/home' })
-      // } else {
-      //   this.$alert('您输入的信息有误请重新输入！', '提示', {
-      //     confirmButtonText: '确定',
-      //     callback: action => {}
-      //   })
-      // }
-    // },
-    // 注册 end
+    loginSuccess(){
+      this.$alert('注册成功', '提示', {
+        confirmButtonText: '确定',
+        callback: action => {
+          this.loginState = true
+        }
+      })
+      // 页面刷新
+      location.reload()
+    },
 
     // 登陆start
     login(formName) {
@@ -402,9 +361,6 @@ export default {
         this.loginFn()
       }
     },
-    // register() {
-    //   this.$router.push({ path: '/register' })
-    // },
     loginFn() {
       let params = {}
       //params.append('username', this.form.username)
@@ -419,75 +375,28 @@ export default {
         .then(this.loginSuccess)
     },
     loginSuccess(res) {
-      //艾辉
-      //6000020
-      console.log(res.data)
       let data = res.data
-      localStorage.setItem('scissionPhone', this.form.phone)
+       //每次登陆后就设置 isLogin  更新vuex状态
+      window.sessionStorage.setItem('isLogin', 'success')
+      this.$store.commit('login', {phone:this.form.phone })
       if (data.ext == 0 & data.img == 0 ) {
         this.$router.push({ path:'/personage_update'  }) // 个人信息填写页面
       }else if (data.ext == 1 & data.img == 0) {
         this.$router.push({ path:'/personage_datum'  }) // 个人信息详情页面
       }else if (data.ext == 0 & data.img == 1) {
-        this.$router.push({ path:'/corporation_datum'  }) // 个人信息详情页面
+        this.$router.push({ path:'/corporation_update'  }) // 企业信息填写页面
       }else if (data.ext == 1 & data.img == 1) {
-        this.$router.push({ path:'/corporation_datum'  }) // 个人信息详情页面
+        this.$router.push({ path:'/corporation_datum'  }) // 企业信息详情页面
       }
-      // this.loginState = true
-      // if (res.data.result) {
-      //   let userInfo = {
-      //     //username: this.form.username,
-      //     number: this.form.phoneNumber,
-      //     password: this.form.password,
-      //     remember: this.form.remember ? 'yes' : 'no'
-      //   }
-      //   //每次登陆后就设置 isLogin
-      //   window.sessionStorage.setItem('isLogin', 'success')
-
-      //   this.$store.commit('login', userInfo)
-      //   this.$router.push({ path: '/home' })
-      // } else {
-      //   this.$alert('您输入的信息有误请重新输入！', '提示', {
-      //     confirmButtonText: '确定',
-      //     callback: action => {}
-      //   })
-      // }
     },
     // 登陆 end
-    
-    // 
-    getlocalStorage() {
-      //设置记住密码的默认状态
-      try {
-        let remember = localStorage.getItem('remember') === 'yes' ? true : false
-
-        if (remember) {
-          //this.form.username = localStorage.getItem('username')
-          this.form.phoneNumber = localStorage.getItem('phoneNumber')
-          this.form.password = localStorage.getItem('password')
-          this.form.remember = true
-        } else {
-          // console.log('无数据')
-          // this.form.username = ''; //姓名
-          // this.form.phoneNumber = ''; //手机号
-          // this.form.password = '',  //密码
-          // this.form.remember = false;  //是否记住密码
-        }
-      } catch (e) {
-        console.log(e)
-      }
-    }
-
   },
   mounted() {
-    this.getlocalStorage(), this.orderHight()
+    this.orderHight()
   }
-  
 }
 </script>
 <style scoped>
-/* .login {
-} */
 .login .el-form-item {
   margin-bottom: 24px;
   width: 100%;
@@ -496,8 +405,8 @@ export default {
   width: 100%;
 }
 .login-div {
-  background: url('../../assets/images/login_bg.png') center top no-repeat;
-  background-size: 100%;
+  height: 100%;
+  background: #eee;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -519,14 +428,11 @@ export default {
   color: rgba(0, 0, 0, 0.42);
 }
 .login-box {
-  /* height: 320px; */
   width: 50%;
 }
 .login-input {
   width: 360px;
   margin: auto;
-  /* height: 100%; */
-  /* height: 320px; */
   padding-top: 32px;
 }
 .login-input .title{

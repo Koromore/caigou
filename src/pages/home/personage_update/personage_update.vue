@@ -1,11 +1,11 @@
 <template>
   <div id="personage_update">
-    <top-header></top-header>
+  
     <el-main>
       <el-row>
         <el-col :span="24" class="greet">
           <div class="grid-content bg-purple-dark">
-            <span style="color:#1890FF;">Admin</span>
+            <span style="color:#1890FF;">{{this.$store.state.phone}}</span>
             ,欢迎注册映盛中国供应商管理系统，标
             <span>*</span>资料必须如实填写！！
           </div>
@@ -42,7 +42,6 @@
         <el-col :span="8" class="content_text">
           <span>*</span>
           <div>区域：</div>
-          <!-- <el-input v-model="district" placeholder="请选择办公地区" clearable></el-input> -->
           <el-cascader
             :options="options"
             v-model="district"
@@ -140,12 +139,11 @@
 </template>
 <script>
 import { regionData } from 'element-china-area-data'
-import topHeader from '../header.vue'
 import cities from '@/common/cities.js' // 引入城市数据
 export default {
   name: 'personage_update',
   components: {
-    topHeader
+  
   },
   data() {
     return {
@@ -196,15 +194,12 @@ export default {
     handleChangeCity(thsAreaCode) {
       // 选择区域
       this.district = this.$refs.cascaderAddr.getCheckedNodes()[0].pathLabels
-      // console.log(this.$refs.cascaderAddr.getCheckedNodes()[0].pathLabels)
     },
     // 城市选择器切换
     handleChange(val) {
-      console.log(val)
     },
     // 证件上传 start
     handleRemove(file, fileList) {
-      console.log(file, fileList)
     },
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url
@@ -229,15 +224,12 @@ export default {
     domUploadSuccess(res,file) {
       if (res.errorCode == 0) {
         let oldData = this.supplierRegisterFileList
-        // console.log(oldData)
         let resData = {
           fileName: file.name,
           filePath: res.ext.path
         }
-        // console.log(resData)
         oldData.push(resData) // 将返回的数据添加到对象中
         this.supplierRegisterFileList = oldData
-        console.log(this.supplierRegisterFileList)
       }
     },
     // 其它附件上传 end
@@ -279,7 +271,11 @@ export default {
       }
       console.log(supplier)
       this.$axios
-        .post('/api/insunSupplierRegisterInfo/addOrUpdateRegisterInfo', supplier)
+        .post('/api/insunSupplierRegisterInfo/addOrUpdateRegisterInfo', supplier
+        // this.$qs.stringify({
+        //     supplier: supplier
+        //   })
+        )
         .then(this.updateSuss)
     },
     updateSuss(res){
@@ -292,6 +288,7 @@ export default {
           this.loginState = true
         }
       })
+      this.$router.push({ path:'/personage_datum'  })
     },
     // 提交 end
     getSmsCodeSuss(res) {

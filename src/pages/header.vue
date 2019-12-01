@@ -8,7 +8,7 @@
 				<i class="el-icon-bell"></i>
 				<el-dropdown trigger="hover">
 					<span class="el-dropdown-link">
-						{{this.$store.state.username}}
+						{{this.$store.state.phone}}
 						<i class="el-icon-caret-bottom el-icon--right"></i>
 					</span>
 					<el-dropdown-menu slot="dropdown">
