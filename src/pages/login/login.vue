@@ -37,9 +37,11 @@
             <!-- 手机验证码输入框 end -->
 
             <!-- 获取手机验证码 start -->
-            <el-button plain class="getv" @click="getSmsCode" v-if=smsCodeBox>
-              获取验证码
+            <el-button plain class="getv" @click="getSmsCode" v-if=smsCodeBox :disabled="isDisabled">
+              {{buttonName}}
             </el-button>
+            <!-- <el-button @click="sendMsg" type="" :disabled="isDisabled">{{buttonName}}</el-button> -->
+
             <!-- 获取手机验证码 end -->
 
             <!-- 图片验证码输入框 start -->
@@ -127,7 +129,7 @@ export default {
       },
       loginState: true, // 避免多次点击
       registerState: true, // 避免多次点击
-      winHeight: '',
+      winHeight: '', // 获取显示高度
       verify_code: '', // 验证手机号是否被注册的返回值
       smsCodeBox: true, // 短信验证码显示与否
       verify_but_show: false, // 验证按钮显示与否
@@ -136,7 +138,10 @@ export default {
       getImgCodeBox: false, // 图形验证码显示与否
       imgCodeButShow: true, // 获取图片验证码按钮显示与否
       imgCodeShow: false, // 获取图片验证码显示与否
-      loading: false // 加载图片验证码动画
+      loading: false, // 加载图片验证码动画
+      buttonName: "发送短信", // 获取短信验证码按钮文字
+			isDisabled: false, // 获取短信验证码按钮是否禁用
+			time: 60 // 获取短信验证码按钮禁用时间
     }
   },
   watch: {
@@ -184,15 +189,11 @@ export default {
     // 通过返回值显示注册/登陆 start
     verify_code_if(){
       if (this.verify_code == 1) {
-        this.verify_but_show = false
         this.login_but_show = true
         this.register_but_show = false
-        this.smsCodeBox = true
       }else if(this.verify_code == 0){
-        this.verify_but_show = false
         this.login_but_show = false
         this.register_but_show = true
-        this.smsCodeBox = true
       }
     },
     // 通过返回值显示注册/登陆 end
@@ -208,6 +209,7 @@ export default {
         })
         return false
       } else {
+        
         // 获取验证码
         let params = {}
         params.phone = this.form.phone
@@ -217,7 +219,6 @@ export default {
           params.type = "login"
         }
         params.imgCode = this.form.imgCode
-        // console.log(params)
         this.$axios
           .post(
             '/api/smsRestService/getShortMsg'
@@ -248,6 +249,19 @@ export default {
         return false
         }
       }else if(data.errorCode == "0"){
+        // 倒计时
+        let me = this;
+        me.isDisabled = true;
+        let interval = window.setInterval(function() {
+          me.buttonName = me.time + 's后重新发送';
+          --me.time;
+          if(me.time < 0) {
+            me.buttonName = "重新发送";
+            me.time = 60;
+            me.isDisabled = false;
+            window.clearInterval(interval);
+          }
+        }, 1000);
         // 手机验证码发送成功提示
         this.$message({
           showClose: true,
@@ -279,7 +293,6 @@ export default {
         }else if(this.login_but_show == true){
           params.type = "login"
         }
-        // console.log(params)
         this.$axios
           .post(
             '/api/smsRestService/captcha'
@@ -330,17 +343,18 @@ export default {
         + '&type=' + params.type) // 账号类型
         .then(this.loginSuccess)
     },
-    loginSuccess(){
-      this.$alert('注册成功', '提示', {
+    loginSuccess(res){
+      if (res.errorCode == 0) {
+        this.$alert('注册成功', '提示', {
         confirmButtonText: '确定',
         callback: action => {
           this.loginState = true
         }
-      })
-      // 页面刷新
-      location.reload()
+        })
+        // 页面刷新
+        location.reload()
+      }
     },
-
     // 登陆start
     login(formName) {
       // if (!this.loginState) return

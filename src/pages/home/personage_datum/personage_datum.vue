@@ -86,7 +86,7 @@
           <el-col :span="9" class="text_indent_1">{{item.fileName}}</el-col>
           <el-col :span="13">{{item.createTime}}</el-col>
           <el-col :span="2">
-            <el-link type="primary" @click="showImage(item.filePath)">预览</el-link>
+            <el-link type="primary" @click="preview(item.filePath)">预览</el-link>
             <el-link type="primary" @click="downLoadDoc(item.filePath)">下载</el-link>
           </el-col>
         </el-col>
@@ -109,6 +109,8 @@
   </div>
 </template>
 <script>
+import {preview} from "../../../utils/preview";// 引入文件预览方法
+import {matchType} from "../../../utils/matchType";// 引入文件格式判断方法
 export default {
   name: 'personage_datum',
   components: {
@@ -116,20 +118,17 @@ export default {
   },
   data() {
     return {
+      scissionPhone: '', // vue-x 存的手机号
       details: {
-          supplierRegisterInfo:{
-            address:'',
-          }
+        supplierRegisterInfo:{
+          address:'',
+        }
       },
       dialogVisible:false, //控制显示预览弹框
       name:'',
       tel:"",
       mail:'',
       wechatOrQQ:'', 
-
-      // 基本信息
-      // 服务信息
-      // 银行个人信息
       // 文档资料
       upload_content: [],
       previewImage:'', //预览的图片
@@ -137,6 +136,11 @@ export default {
   },
   // 方法
   methods: {
+    // 文件格式判断
+    matchType,
+    // 文件预览
+    preview,
+    // 更新按钮跳转
     update() {
       this.$router.push({ path: '/personage_update' })
     },
@@ -159,26 +163,21 @@ export default {
       if (data.errorCode == "0") {
         let deli=JSON.parse(data.ext)
         this.details = deli
-
         this.name = deli.supplierRegisterInfo.supplierContactInfoList[0].name;
         this.tel = deli.supplierRegisterInfo.supplierContactInfoList[0].tel;
         this.mail = deli.supplierRegisterInfo.supplierContactInfoList[0].mail;
         this.wechatOrQQ = deli.supplierRegisterInfo.supplierContactInfoList[0].wechatOrQQ;
         this.upload_content = deli.supplierRegisterInfo.supplierRegisterFileList;
-        console.log(this.details)
       }
     },
-    //下载附件
+    // 获取供应商信息 end
+    // 下载附件
     downLoadDoc(path){
       let a = document.createElement('a');
         a.download = '';
         a.setAttribute('href',path);
         a.click();
-    },
-    showImage(path){
-      this.dialogVisible = true;
-      this.previewImage = '../../../static/img/logo.png';
-    },
+    }
     // 获取供应商信息 end
   },
   // 钩子函数

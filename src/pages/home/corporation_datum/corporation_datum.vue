@@ -128,7 +128,7 @@
           <el-col :span="9" class="text_indent_1">{{item.fileName}}</el-col>
           <el-col :span="13">{{item.createTime}}</el-col>
           <el-col :span="2">
-            <el-link type="primary"  @click="showImage(item.filePath)">预览</el-link>
+            <el-link type="primary"  @click="preview(item.filePath)">预览</el-link>
             <el-link type="primary" @click="downLoadDoc(item.filePath)">下载</el-link>
           </el-col>
         </el-col>
@@ -151,20 +151,19 @@
   </div>
 </template>
 <script>
+import {preview} from "../../../utils/preview";// 引入文件预览方法
+import {matchType} from "../../../utils/matchType";// 引入文件格式判断方法
 export default {
   name: 'corporation_datum',
-  components: {
-
-  },
+  components: {},
   data() {
     return {
-      scissionPhone: '',
+      scissionPhone: '', // vue-x 存的手机号
       deli: '',
       // 基本信息 服务信息 
       supplierRegisterInfo: '',
       // 联系人信息
       supplierContactInfoList: [],
-      // 开票信息
       // 文档资料
       supplierRegisterFileList: '',
       dialogVisible:false, //控制显示预览弹框
@@ -173,6 +172,11 @@ export default {
   },
   // 方法
   methods: {
+    // 文件格式判断
+    matchType,
+    // 文件预览
+    preview,
+    // 更新按钮跳转
     update() {
       this.$router.push({ path: '/corporation_update' })
     },
@@ -190,28 +194,27 @@ export default {
         )
         .then(this.getSupplierInfoSuss)
     },
+    // 回调
     getSupplierInfoSuss(res) {
       let data = res.data
       if (data.errorCode == "0") {
         let deli=JSON.parse(data.ext)
-        console.log(deli)
         this.deli = deli
         this.supplierRegisterInfo = deli.supplierRegisterInfo
         this.supplierContactInfoList = deli.supplierRegisterInfo.supplierContactInfoList
         this.supplierRegisterFileList = deli.supplierRegisterInfo.supplierRegisterFileList
       }
     },
-    // 预览  下载
-    showImage(path){
-      this.dialogVisible = true;
-      this.previewImage = '../../../static/img/logo.png';
-    },
+     // 下载附件
     downLoadDoc(path){
       let a = document.createElement('a');
-        a.download = '';
-        a.setAttribute('href',path);
-        a.click();
-    }
+      a.download = '';
+      a.setAttribute('href',path);
+      a.click();
+    },
+    // 获取供应商信息 end
+    // 测试
+    test(){}
   },
   // 钩子函数
   mounted() {
