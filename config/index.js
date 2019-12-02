@@ -12,17 +12,17 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/api': {
-        target: 'http://176.10.10.14:8081/', // 接口的域名 正式域名http://pms.guoxinad.com.cn/pms/
+        target: 'http://pms.guoxinad.com.cn/', // 接口的域名 正式域名http://pms.guoxinad.com.cn/pms/
         'secure': false,  // 如果是https接口，需要配置这个参数
         'changeOrigin': true, // 如果接口跨域，需要进行这个参数配置
         'pathRewrite': {
-          '^/api': '/pms3'
+          '^/api': '/pms'
         }
       }
     },
 
     // Various Dev Server settings
-    host: '176.10.10.62', // can be overwritten by process.env.HOST
+    host: 'localhost', // can be overwritten by process.env.HOST
     port: 8080, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: false,
     errorOverlay: true,
