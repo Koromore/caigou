@@ -44,7 +44,7 @@
             <span style="color: #FF6600;">*</span>营业执照：
           </div>
           <div class="license">
-            <img src="~@/assets/images/license.jpg" width="108" height="108" alt="" srcset="">
+            <img :src="'/api/upload'+supplierRegisterInfo.businessLicensePath" width="108" height="108" alt="" srcset="">
           </div>
         </el-col>
       </el-row>
