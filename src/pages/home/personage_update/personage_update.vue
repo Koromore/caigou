@@ -142,15 +142,12 @@ import { regionData } from 'element-china-area-data'
 import cities from '@/common/cities.js' // 引入城市数据
 export default {
   name: 'personage_update',
-  components: {
-  
-  },
+  components: {},
   data() {
     return {
       // 上传API
       uploadApi: '', //
       // 信息填写
-      supplierPhone: '', // 供应商电话
       // 基本信息
       name: '', // 姓名
       telephone: '', // 电话
@@ -183,12 +180,10 @@ export default {
   },
   // 方法
   methods: {
-    // 获取本地缓存的登录/供应商电话手机号
+    // 获取存于vue-x中的登陆手机号
     locals() {
-      let supplierPhone = localStorage.getItem('scissionPhone')
-      this.supplierPhone = supplierPhone
       this.uploadApi =
-        '/api/insunSupplierFileupload/upload' + '?phone=' + supplierPhone
+        '/api/insunSupplierFileupload/upload' + '?phone=' + this.$store.state.phone
     },
     // 城市选择器
     handleChangeCity(thsAreaCode) {
@@ -241,7 +236,7 @@ export default {
     // 提交 start
     update() {
       let supplier = {
-        phoneNum: this.supplierPhone,
+        phoneNum: this.$store.state.phone, // 供应商电话
         supplierRegisterInfo: {
           address: this.site, // 地址
           area: this.district[2], // 区域

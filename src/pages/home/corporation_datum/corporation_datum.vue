@@ -180,14 +180,9 @@ export default {
     update() {
       this.$router.push({ path: '/corporation_update' })
     },
-     // 获取本地缓存的登录手机号
-    locals() {
-      let scissionPhone = localStorage.getItem('scissionPhone')
-      this.scissionPhone = scissionPhone
-    },
     // 获取供应商信息 start
     getSupplierInfo() {
-      let phone = this.scissionPhone
+      let phone = this.$store.state.phone
       this.$axios
         .post(
           '/api/insunSupplierRegisterInfo/getSupplierInfo' + '?phone=' + phone
@@ -218,7 +213,6 @@ export default {
   },
   // 钩子函数
   mounted() {
-    this.locals()
     this.getSupplierInfo()
   }
 }

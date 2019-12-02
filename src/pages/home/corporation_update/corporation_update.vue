@@ -209,8 +209,7 @@ import { regionData } from 'element-china-area-data'
 import cities from '@/common/cities.js' // 引入城市数据
 export default {
   name: 'corporation_update',
-  components: {
-  },
+  components: {},
   data() {
     return {
       supplierPhone: '', // 供应商电话
@@ -218,7 +217,6 @@ export default {
       // 上传API
       uploadApi: '', //
       // 信息填写
-      supplierPhone: '', // 供应商电话
       // 基本信息
       companyName: '', // 企业名称
       creditCode: '', // 社会信用代码
@@ -276,12 +274,10 @@ export default {
   },
   // 方法
   methods: {
-    // 获取本地缓存的登录/供应商电话手机号
+    // 获取存于vue-x中的登陆手机号
     locals() {
-      let supplierPhone = localStorage.getItem('scissionPhone')
-      this.supplierPhone = supplierPhone
       this.uploadApi =
-        '/api/insunSupplierFileupload/upload' + '?phone=' + supplierPhone
+        '/api/insunSupplierFileupload/upload' + '?phone=' + this.$store.state.phone
     },
     // 城市选择器
     handleChangeCity(thsAreaCode) {
@@ -338,7 +334,7 @@ export default {
     // 上传信息 start
     update() {
       let supplier = {
-        phoneNum: this.supplierPhone, // 供应商电话
+        phoneNum: this.$store.state.phone, // 供应商电话
         supplierRegisterInfo: {
           address: this.address, // 办公地址
           area: this.district[2], // 区域
@@ -394,7 +390,7 @@ export default {
   },
   // 钩子函数
   mounted() {
-    this.locals()
+    // this.locals()
   }
 }
 </script>
